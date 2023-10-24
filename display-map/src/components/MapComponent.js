@@ -1,6 +1,7 @@
 import React, { useRef, useEffect} from 'react'
 import MapView from "@arcgis/core/views/MapView";
 import Map from "@arcgis/core/Map";
+import LayerList from "@arcgis/core/widgets/LayerList";
 
 const MapComponent = () => {
 
@@ -20,6 +21,15 @@ const MapComponent = () => {
         map: webmap, // An instance of a Map object to display in the view.
         center: [-117.1490,32.7353],
         scale: 10000000 // Represents the map scale at the center of the view.
+      });
+
+      view.when(() => {
+        const layerList = new LayerList({
+          view: view
+        });
+
+        // Add widget to the top right corner of the view
+        view.ui.add(layerList, "top-right");
       });
 
       return () => view && view.destroy()

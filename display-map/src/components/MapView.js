@@ -9,7 +9,7 @@ function MapView() {
         () => {
             let view;
             loadModules(["esri/views/MapView", "esri/WebMap", "esri/widgets/Home", "esri/widgets/ScaleBar",
-             "esri/widgets/Compass", "esri/widgets/LayerList"],
+             "esri/widgets/Compass", "esri/widgets/LayerList", "esri/widgets/BasemapToggle"],
             {css: true}
             ).then(([MapView, WebMap, Home, ScaleBar, Compass, LayerList]) => {
                 const webMap = new WebMap({
@@ -19,9 +19,10 @@ function MapView() {
 
                 view = new MapView({
                     map:webMap,
-                    // center:[],
-                    zoom:4,
-                    container:MapElement.current
+                    // center: [ -181.24354, -42.05389 ],
+                    zoom:2,
+                    container:MapElement.current,
+                    center: [100, -30]
                 })
 
                 const homeBtn = new Home({
@@ -37,13 +38,20 @@ function MapView() {
                     view: view
                 });
 
-                view.when(() => {
-                    const layerList = new LayerList({
-                      view: view
-                    });
-                // Add layer list to the top right corner of the view
+                const layerList = new LayerList({
+                    view: view
+                  });
+
                 view.ui.add(layerList, "top-right");  
-                });
+
+                // view.when(() => {
+                //     const layerList = new LayerList({
+                //       view: view
+                //     });
+                // // Add layer list to the top right corner of the view
+                // view.ui.add(layerList, "top-right");  
+                // });
+                
                 // Add widgets to the map
                 // Add the widget to the bottom left corner of the view
                 view.ui.add(scaleBar, {
