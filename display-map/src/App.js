@@ -1,8 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header'
-import Content from './components/Content';
+// import Content from './components/Content';
 import Footer from './components/Footer';
+import MapView from './components/MapView';
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
     // component in this main component 
     <div>
       <Header />
-      <Content />
+      <MapView/>
       <Footer/>
     </div>
   );
