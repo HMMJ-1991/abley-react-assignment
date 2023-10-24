@@ -8,22 +8,71 @@ function MapView() {
     useEffect (
         () => {
             let view;
-            loadModules(["esri/views/MapView", "esri/WebMap", "esri/widgets/Home", "esri/widgets/ScaleBar",
-             "esri/widgets/Compass", "esri/widgets/LayerList", "esri/widgets/BasemapToggle"],
+            loadModules([
+                        "esri/views/MapView", 
+                        "esri/WebMap", 
+                        "esri/widgets/Home", 
+                        "esri/widgets/ScaleBar",
+                        "esri/widgets/Compass", 
+                        "esri/widgets/LayerList",  
+                        "esri/widgets/BasemapLayerList", 
+                        "esri/widgets/BasemapGallery", 
+                        "esri/widgets/Expand",
+                        "esri/layers/FeatureLayer",
+                        "esri/geometry/geometryEngine",
+                        "esri/core/reactiveUtils"
+                    ],
             {css: true}
-            ).then(([MapView, WebMap, Home, ScaleBar, Compass, LayerList]) => {
+            ).then(([
+                    MapView, 
+                    WebMap, 
+                    Home, 
+                    ScaleBar, 
+                    Compass, 
+                    LayerList, 
+                    BasemapLayerList, 
+                    BasemapGallery, 
+                    Expand, 
+                    FeatureLayer,
+                    geometryEngine,
+                    reactiveUtils 
+                ]) => {
                 const webMap = new WebMap({
-                    //basemap: 'topo-vector'
                     basemap: 'streets-vector'
                 })
 
                 view = new MapView({
                     map:webMap,
-                    // center: [ -181.24354, -42.05389 ],
-                    zoom:2,
+                    zoom:5,
                     container:MapElement.current,
-                    center: [100, -30]
-                })
+                    // center: [100, -30],
+                    extent: {
+                        xmin: 1245903.1332998276,
+                        ymin: 4560372.931300163,
+                        xmax: 1983031.1332001686,
+                        ymax: 6049658.087100029,
+                        spatialReference: 2193
+                    }
+                });
+
+                let basemapLayerList = new BasemapLayerList({
+                    view: view
+                  });
+                  // Adds the widget below other elements in the top left corner of the view
+                  view.ui.add(basemapLayerList, {
+                    position: "top-right"
+                  });
+
+                  // Specify the widget while adding to the view's UI
+                const basemapGallery = new BasemapGallery({
+                    view: view
+                });
+
+                const bgExpand = new Expand({
+                    view,
+                    content: basemapGallery,
+                    expandIcon: "basemap"
+                  });
 
                 const homeBtn = new Home({
                     view: view
@@ -42,21 +91,42 @@ function MapView() {
                     view: view
                   });
 
-                view.ui.add(layerList, "top-right");  
+                /** Create popup actions */
+                // Add this action to the popup so it is always available in this view
+                const measureThisAction = {
+                    title: "Measure Length",
+                    id: "measure-this",
+                    image:
+                    "https://developers.arcgis.com/javascript/latest/sample-code/popup-actions/live/Measure_Distance16.png"
+                };
 
-                // view.when(() => {
-                //     const layerList = new LayerList({
-                //       view: view
-                //     });
-                // // Add layer list to the top right corner of the view
-                // view.ui.add(layerList, "top-right");  
-                // });
+                const template = {
+                    // autocasts as new PopupTemplate()
+                    title: "Trail run",
+                    content: "{name}",
+                    actions: [measureThisAction]
+                };
+                
+                // Add feature layers
+                const parksLayer = new FeatureLayer({
+                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/26"
+                });
+
+                const bickLayer = new FeatureLayer({
+                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/24",
+                    popupTemplate: template
+                });
+                
+                webMap.add(bickLayer);
+                webMap.add(parksLayer);
                 
                 // Add widgets to the map
                 // Add the widget to the bottom left corner of the view
                 view.ui.add(scaleBar, {
                     position: "bottom-left"
                   });
+
+                view.ui.add(layerList, "top-right");  
 
                 // Add the home button to the top left corner of the view
                 view.ui.add(homeBtn, "top-left");
@@ -65,7 +135,9 @@ function MapView() {
                 // Add the Compass widget to the top left corner of the view
                 view.ui.add(compassWidget, "top-left");
 
-
+                                
+                // Add the widget to the top-right corner of the view
+                view.ui.add(bgExpand, "top-right");
             })
 
             return() => {
@@ -78,7 +150,7 @@ function MapView() {
         })
     return (
         <div 
-            style={{ height: '75vh', padding: 20}} ref={MapElement}>
+            style={{ height: '80vh', padding: 20}} ref={MapElement}>
 
         </div>
     )
