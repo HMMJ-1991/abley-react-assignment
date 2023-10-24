@@ -8,10 +8,27 @@ function MapView() {
     useEffect (
         () => {
             let view;
-            loadModules(["esri/views/MapView", "esri/WebMap", "esri/widgets/Home", "esri/widgets/ScaleBar",
-             "esri/widgets/Compass", "esri/widgets/LayerList", "esri/widgets/BasemapToggle"],
+            loadModules(["esri/views/MapView", 
+                        "esri/WebMap", 
+                        "esri/widgets/Home", 
+                        "esri/widgets/ScaleBar",
+                        "esri/widgets/Compass", 
+                        "esri/widgets/LayerList",  
+                        "esri/widgets/BasemapLayerList", 
+                        "esri/widgets/BasemapGallery", 
+                        "esri/widgets/Expand",
+                        "esri/layers/FeatureLayer"],
             {css: true}
-            ).then(([MapView, WebMap, Home, ScaleBar, Compass, LayerList]) => {
+            ).then(([MapView, 
+                    WebMap, 
+                    Home, 
+                    ScaleBar, 
+                    Compass, 
+                    LayerList, 
+                    BasemapLayerList, 
+                    BasemapGallery, 
+                    Expand, 
+                    FeatureLayer]) => {
                 const webMap = new WebMap({
                     //basemap: 'topo-vector'
                     basemap: 'streets-vector'
@@ -22,8 +39,35 @@ function MapView() {
                     // center: [ -181.24354, -42.05389 ],
                     zoom:2,
                     container:MapElement.current,
-                    center: [100, -30]
-                })
+                    center: [100, -30],
+                    extent: {
+                        // autocasts as new Extent()
+                        xmin: -9177811,
+                        ymin: 4247000,
+                        xmax: -9176791,
+                        ymax: 4247784,
+                        spatialReference: 102100
+                      }
+                });
+
+                let basemapLayerList = new BasemapLayerList({
+                    view: view
+                  });
+                  // Adds the widget below other elements in the top left corner of the view
+                  view.ui.add(basemapLayerList, {
+                    position: "top-right"
+                  });
+
+                  // Specify the widget while adding to the view's UI
+                const basemapGallery = new BasemapGallery({
+                    view: view
+                });
+
+                const bgExpand = new Expand({
+                    view,
+                    content: basemapGallery,
+                    expandIcon: "basemap"
+                  });
 
                 const homeBtn = new Home({
                     view: view
@@ -42,7 +86,15 @@ function MapView() {
                     view: view
                   });
 
-                view.ui.add(layerList, "top-right");  
+
+                // Carbon storage of trees in Warren Wilson College.
+                const featureLayer = new FeatureLayer({
+                    url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
+                });
+        
+                webMap.add(featureLayer);  
+
+
 
                 // view.when(() => {
                 //     const layerList = new LayerList({
@@ -58,6 +110,8 @@ function MapView() {
                     position: "bottom-left"
                   });
 
+                view.ui.add(layerList, "top-right");  
+
                 // Add the home button to the top left corner of the view
                 view.ui.add(homeBtn, "top-left");
 
@@ -65,7 +119,9 @@ function MapView() {
                 // Add the Compass widget to the top left corner of the view
                 view.ui.add(compassWidget, "top-left");
 
-
+                                
+                // Add the widget to the top-right corner of the view
+                view.ui.add(bgExpand, "top-right");
             })
 
             return() => {
