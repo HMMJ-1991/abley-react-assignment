@@ -30,24 +30,21 @@ function MapView() {
                     Expand, 
                     FeatureLayer]) => {
                 const webMap = new WebMap({
-                    //basemap: 'topo-vector'
                     basemap: 'streets-vector'
                 })
 
                 view = new MapView({
                     map:webMap,
-                    // center: [ -181.24354, -42.05389 ],
-                    zoom:2,
+                    zoom:5,
                     container:MapElement.current,
-                    center: [100, -30],
+                    // center: [100, -30],
                     extent: {
-                        // autocasts as new Extent()
-                        xmin: -9177811,
-                        ymin: 4247000,
-                        xmax: -9176791,
-                        ymax: 4247784,
-                        spatialReference: 102100
-                      }
+                        xmin: 1245903.1332998276,
+                        ymin: 4560372.931300163,
+                        xmax: 1983031.1332001686,
+                        ymax: 6049658.087100029,
+                        spatialReference: 2193
+                    }
                 });
 
                 let basemapLayerList = new BasemapLayerList({
@@ -86,23 +83,18 @@ function MapView() {
                     view: view
                   });
 
-
-                // Carbon storage of trees in Warren Wilson College.
-                const featureLayer = new FeatureLayer({
-                    url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
+                
+                // Add feature layers
+                const parksLayer = new FeatureLayer({
+                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/26"
                 });
-        
-                webMap.add(featureLayer);  
 
-
-
-                // view.when(() => {
-                //     const layerList = new LayerList({
-                //       view: view
-                //     });
-                // // Add layer list to the top right corner of the view
-                // view.ui.add(layerList, "top-right");  
-                // });
+                const bickLayer = new FeatureLayer({
+                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/24"
+                });
+                
+                webMap.add(bickLayer);
+                webMap.add(parksLayer);
                 
                 // Add widgets to the map
                 // Add the widget to the bottom left corner of the view
