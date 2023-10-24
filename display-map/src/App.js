@@ -4,6 +4,7 @@ import Header from './components/Header'
 // import Content from './components/Content';
 import Footer from './components/Footer';
 import MapView from './components/MapView';
+import MapComponent from './components/MapComponent';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
     <div>
       <Header />
       <MapView/>
+      {/* <MapComponent/> */}
       <Footer/>
     </div>
   );
