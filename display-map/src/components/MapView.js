@@ -8,7 +8,8 @@ function MapView() {
     useEffect (
         () => {
             let view;
-            loadModules(["esri/views/MapView", 
+            loadModules([
+                        "esri/views/MapView", 
                         "esri/WebMap", 
                         "esri/widgets/Home", 
                         "esri/widgets/ScaleBar",
@@ -17,9 +18,13 @@ function MapView() {
                         "esri/widgets/BasemapLayerList", 
                         "esri/widgets/BasemapGallery", 
                         "esri/widgets/Expand",
-                        "esri/layers/FeatureLayer"],
+                        "esri/layers/FeatureLayer",
+                        "esri/geometry/geometryEngine",
+                        "esri/core/reactiveUtils"
+                    ],
             {css: true}
-            ).then(([MapView, 
+            ).then(([
+                    MapView, 
                     WebMap, 
                     Home, 
                     ScaleBar, 
@@ -28,7 +33,10 @@ function MapView() {
                     BasemapLayerList, 
                     BasemapGallery, 
                     Expand, 
-                    FeatureLayer]) => {
+                    FeatureLayer,
+                    geometryEngine,
+                    reactiveUtils 
+                ]) => {
                 const webMap = new WebMap({
                     basemap: 'streets-vector'
                 })
@@ -83,6 +91,21 @@ function MapView() {
                     view: view
                   });
 
+                /** Create popup actions */
+                // Add this action to the popup so it is always available in this view
+                const measureThisAction = {
+                    title: "Measure Length",
+                    id: "measure-this",
+                    image:
+                    "https://developers.arcgis.com/javascript/latest/sample-code/popup-actions/live/Measure_Distance16.png"
+                };
+
+                const template = {
+                    // autocasts as new PopupTemplate()
+                    title: "Trail run",
+                    content: "{name}",
+                    actions: [measureThisAction]
+                };
                 
                 // Add feature layers
                 const parksLayer = new FeatureLayer({
@@ -90,7 +113,8 @@ function MapView() {
                 });
 
                 const bickLayer = new FeatureLayer({
-                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/24"
+                    url: "https://gis.ecan.govt.nz/arcgis/rest/services/Public/Canterbury_Maps/MapServer/24",
+                    popupTemplate: template
                 });
                 
                 webMap.add(bickLayer);
@@ -126,7 +150,7 @@ function MapView() {
         })
     return (
         <div 
-            style={{ height: '75vh', padding: 20}} ref={MapElement}>
+            style={{ height: '80vh', padding: 20}} ref={MapElement}>
 
         </div>
     )
